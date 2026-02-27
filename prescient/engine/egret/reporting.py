@@ -119,9 +119,11 @@ def report_curtailment_for_deterministic_ruc(ruc):
 
     curtailment_in_some_period = False
     for i,t in enumerate(time_periods):
-        quantity_curtailed_this_period = sum(gdict['p_max']['values'][i] - gdict['pg']['values'][i] \
-                                            for gdict in rn_gens.values())
-                            # don't print 0.00 below
+        quantity_curtailed_this_period = sum((gdict['p_max']['values'][i] if isinstance(gdict['p_max'], dict) 
+                                              else gdict['p_max']) - gdict['pg']['values'][i]
+                                              for gdict in rn_gens.values())
+                                # don't print 0.00 below
+        
         if quantity_curtailed_this_period >= 5e-3:
             if curtailment_in_some_period == False:
                 print("Renewables curtailment summary (time-period, aggregate_quantity):")
